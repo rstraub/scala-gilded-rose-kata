@@ -1,3 +1,8 @@
+# Gilded Rose Refactoring Kata in Scala
+
+This is a Scala implementation of the [Gilded Rose Refactoring Kata](https://github.com/emilybache/GildedRose-Refactoring-Kata/tree/main/scala).
+Simplified and reduced to the bare minimum for a Scala context.
+
 # Scala Kata Base
 
 [![Scala CI](https://github.com/rstraub/scala-kata-base/actions/workflows/scala.yml/badge.svg)](https://github.com/rstraub/scala-kata-base/actions/workflows/scala.yml)
