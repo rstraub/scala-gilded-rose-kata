@@ -30,9 +30,7 @@ class GildedRose(val items: Array[Item]) {
           }
         }
       } else {
-        if (!item.name.equals(SULFURAS)) {
-          decreaseQuality(item)
-        }
+        decreaseQuality(item)
       }
 
       if (!item.name.equals(SULFURAS)) {
@@ -42,9 +40,7 @@ class GildedRose(val items: Array[Item]) {
       if (item.sellIn < 0) {
         if (!item.name.equals(AGED_BRIE)) {
           if (!item.name.equals(BACKSTAGE_PASS)) {
-            if (!item.name.equals(SULFURAS)) {
-              decreaseQuality(item)
-            }
+            decreaseQuality(item)
           } else {
             item.quality = 0
           }
@@ -65,6 +61,7 @@ class GildedRose(val items: Array[Item]) {
   }
 
   private def decreaseQuality(item: Item): Unit = {
+    if (item.name == SULFURAS) return
     if (item.quality > MIN_QUALITY)
       item.quality = item.quality - 1
   }
