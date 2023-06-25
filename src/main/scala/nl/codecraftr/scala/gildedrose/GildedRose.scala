@@ -6,15 +6,21 @@ package nl.codecraftr.scala.gildedrose
  * D -> Data / Facts about Events
  */
 class GildedRose(val items: Array[Item]) {
+  private val AGED_BRIE = "Aged Brie"
+
+  private val BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert"
+
+  private val SULFURAS = "Sulfuras, Hand of Ragnaros"
+
   // A
   def updateQuality(): Unit = {
     items.foreach(item => {
       if (
-        !item.name.equals("Aged Brie")
-        && !item.name.equals("Backstage passes to a TAFKAL80ETC concert")
+        !item.name.equals(AGED_BRIE)
+        && !item.name.equals(BACKSTAGE_PASS)
       ) {
         if (item.quality > 0) {
-          if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
+          if (!item.name.equals(SULFURAS)) {
             item.quality = decreaseQuality(item)
           }
         }
@@ -22,7 +28,7 @@ class GildedRose(val items: Array[Item]) {
         if (item.quality < 50) {
           item.quality = increaseQuality(item)
 
-          if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
+          if (item.name.equals(BACKSTAGE_PASS)) {
             if (item.sellIn < 11) {
               if (item.quality < 50) {
                 item.quality = increaseQuality(item)
@@ -38,15 +44,15 @@ class GildedRose(val items: Array[Item]) {
         }
       }
 
-      if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
+      if (!item.name.equals(SULFURAS)) {
         item.sellIn = decreaseSellBy(item)
       }
 
       if (item.sellIn < 0) {
-        if (!item.name.equals("Aged Brie")) {
-          if (!item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
+        if (!item.name.equals(AGED_BRIE)) {
+          if (!item.name.equals(BACKSTAGE_PASS)) {
             if (item.quality > 0) {
-              if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
+              if (!item.name.equals(SULFURAS)) {
                 item.quality = decreaseQuality(item)
               }
             }
@@ -62,11 +68,11 @@ class GildedRose(val items: Array[Item]) {
     })
   }
 
-    private def decreaseSellBy(item: Item) = {
-        item.sellIn - 1
-    }
+  private def decreaseSellBy(item: Item) = {
+    item.sellIn - 1
+  }
 
-    private def increaseQuality(item: Item) = {
+  private def increaseQuality(item: Item) = {
     item.quality + 1
   }
 
