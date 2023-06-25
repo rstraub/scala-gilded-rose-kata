@@ -6,12 +6,8 @@ package nl.codecraftr.scala.gildedrose
  * D -> Data / Facts about Events
  */
 class GildedRose(val items: Array[Item]) {
-  private val MIN_QUALITY = 0
-  private val MAX_QUALITY = 50
-
   private val AGED_BRIE = "Aged Brie"
   private val BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert"
-  private val SULFURAS = "Sulfuras, Hand of Ragnaros"
 
   // A -> mutates state of the store
   def updateQuality(): Unit = {
@@ -30,69 +26,66 @@ class GildedRose(val items: Array[Item]) {
     items.map(item => updated(item))
   }
 
-  // C -> Copies on write, no side effects
   private def updated(item: StoreItem): StoreItem = {
     val updatedItem =
       item.name match {
-        case AGED_BRIE => increaseQuality(item)
+        case AGED_BRIE => item.increaseQuality()
         case BACKSTAGE_PASS => {
           item.sellIn match {
-            case x if x <= 5  => increaseQuality(item, 3)
-            case x if x <= 10 => increaseQuality(item, 2)
-            case _            => increaseQuality(item)
+            case x if x <= 5  => item.increaseQuality(3)
+            case x if x <= 10 => item.increaseQuality(2)
+            case _            => item.increaseQuality()
           }
         }
-        case _ => decreaseQuality(item)
+        case _ => item.decreaseQuality
       }
 
-    val decreasedSellIn = decreaseSellBy(updatedItem)
+    val decreasedSellIn = updatedItem.decreaseSellBy
 
-    val afterSellIn =
+      val afterSellIn =
       if (decreasedSellIn.sellIn < 0) {
         decreasedSellIn.name match {
-          case AGED_BRIE      => increaseQuality(decreasedSellIn)
-          case BACKSTAGE_PASS => withQuality(decreasedSellIn, 0)
-          case _              => decreaseQuality(decreasedSellIn)
+          case AGED_BRIE      => decreasedSellIn.increaseQuality()
+          case BACKSTAGE_PASS => worthless(decreasedSellIn)
+          case _              => decreasedSellIn.decreaseQuality
         }
       } else decreasedSellIn
 
     afterSellIn
   }
 
-  // C -> copies argument, returns new value
-  private def increaseQuality(item: StoreItem, amount: Int = 1): StoreItem = {
-    if (item.quality + amount > MAX_QUALITY)
-      withQuality(item, MAX_QUALITY)
-    else withQuality(item, item.quality + amount)
-  }
-
-  // C -> copies argument, returns new value
-  private def decreaseQuality(item: StoreItem): StoreItem = {
-    if (item.name == SULFURAS) item
-    else if (item.quality > MIN_QUALITY)
-      withQuality(item, item.quality - 1)
-    else withQuality(item, 0)
-  }
-
-  // C -> copies argument, returns new value
-  private def withQuality(item: StoreItem, quality: Int): StoreItem = {
-    item.copy(quality = quality)
-  }
-
-  // C -> copies argument, returns new value
-  private def decreaseSellBy(item: StoreItem): StoreItem = {
-    if (item.name == SULFURAS) item
-    else withSellIn(item, item.sellIn - 1)
-  }
-
-  private def withSellIn(item: StoreItem, sellIn: Int): StoreItem = {
-    item.copy(sellIn = sellIn)
+    // C -> copies argument, returns new value
+  private def worthless(item: StoreItem) = {
+    item.copy(quality = 0)
   }
 }
 
 // D -> immutable
-case class StoreItem(name: String, sellIn: Int, quality: Int)
+case class StoreItem(name: String, sellIn: Int, quality: Int) {
+  private val MIN_QUALITY = 0
+  private val MAX_QUALITY = 50
+  private val SULFURAS = "Sulfuras, Hand of Ragnaros"
+
+  def increaseQuality(amount: Int = 1): StoreItem = {
+    if (quality + amount > MAX_QUALITY)
+      copy(quality = MAX_QUALITY)
+    else copy(quality = quality + amount)
+  }
+
+  def decreaseQuality: StoreItem = {
+    if (name == SULFURAS) this
+    else if (quality > MIN_QUALITY)
+      copy(quality = quality - 1)
+    else copy(quality = 0)
+  }
+
+  def decreaseSellBy: StoreItem = {
+    if (name == SULFURAS) this
+    else copy(sellIn = sellIn - 1)
+  }
+}
 
 object StoreItem {
-  def from(item: Item): StoreItem = StoreItem(item.name, item.sellIn, item.quality)
+  def from(item: Item): StoreItem =
+    StoreItem(item.name, item.sellIn, item.quality)
 }
