@@ -33,43 +33,53 @@ class GildedRose(val items: Array[Item]) {
 
   // C -> Copies on write, no side effects
   private def updated(item: Item): Item = {
-    val updatedItem = copied(item)
-    updatedItem.name match {
-      case AGED_BRIE => increaseQuality(updatedItem)
-      case BACKSTAGE_PASS => {
-        updatedItem.sellIn match {
-          case x if x <= 5  => increaseQuality(updatedItem, 3)
-          case x if x <= 10 => increaseQuality(updatedItem, 2)
-          case _            => increaseQuality(updatedItem)
+    val updatedItem =
+      item.name match {
+        case AGED_BRIE => increaseQuality(item)
+        case BACKSTAGE_PASS => {
+          item.sellIn match {
+            case x if x <= 5  => increaseQuality(item, 3)
+            case x if x <= 10 => increaseQuality(item, 2)
+            case _            => increaseQuality(item)
+          }
         }
+        case _ => decreaseQuality(item)
       }
-      case _ => decreaseQuality(updatedItem)
-    }
 
     val decreasedSellIn = decreaseSellBy(updatedItem)
 
-    if (decreasedSellIn.sellIn < 0) {
-      decreasedSellIn.name match {
-        case AGED_BRIE      => increaseQuality(decreasedSellIn)
-        case BACKSTAGE_PASS => decreasedSellIn.quality = 0
-        case _              => decreaseQuality(decreasedSellIn)
-      }
-    }
-    decreasedSellIn
+    val afterSellIn =
+      if (decreasedSellIn.sellIn < 0) {
+        decreasedSellIn.name match {
+          case AGED_BRIE      => increaseQuality(decreasedSellIn)
+          case BACKSTAGE_PASS => withQuality(decreasedSellIn, 0)
+          case _              => decreaseQuality(decreasedSellIn)
+        }
+      } else decreasedSellIn
+
+    afterSellIn
   }
 
-  // A -> mutates arguments, no return value
-  private def increaseQuality(item: Item, amount: Int = 1): Unit = {
-    item.quality = item.quality + amount
-    if (item.quality > MAX_QUALITY)
-      item.quality = MAX_QUALITY
+  // C -> copies argument, returns new value
+  private def increaseQuality(item: Item, amount: Int = 1): Item = {
+    if (item.quality + amount > MAX_QUALITY)
+      withQuality(item, MAX_QUALITY)
+    else withQuality(item, item.quality + amount)
   }
 
-  // A -> mutates arguments, no return value
-  private def decreaseQuality(item: Item): Unit = {
-    if (item.name == SULFURAS) return
-    if (item.quality > MIN_QUALITY)
-      item.quality = item.quality - 1
+  // C -> copies argument, returns new value
+  private def decreaseQuality(item: Item): Item = {
+    if (item.name == SULFURAS) item
+    else if (item.quality > MIN_QUALITY)
+      withQuality(item, item.quality - 1)
+    else withQuality(item, 0)
+  }
+
+  // C -> copies argument, returns new value
+  private def withQuality(item: Item, quality: Int): Item = {
+    val copy = copied(item)
+    copy.quality = quality
+    copy
   }
 
   // C -> copies argument, returns new value
