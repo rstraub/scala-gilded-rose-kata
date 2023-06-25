@@ -65,9 +65,9 @@ class GildedRose(val items: Array[Item]) {
   }
 
   // A -> mutates arguments, no return value
-  private def increaseQuality(item: Item): Unit = {
+  private def increaseQuality(item: Item, amount: Int = 1): Unit = {
     if (item.quality < MAX_QUALITY)
-      item.quality = item.quality + 1
+      item.quality = item.quality + amount
   }
 
   // A -> mutates arguments, no return value
