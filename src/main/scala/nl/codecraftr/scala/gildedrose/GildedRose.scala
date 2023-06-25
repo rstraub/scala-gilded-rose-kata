@@ -15,7 +15,7 @@ class GildedRose(val items: Array[Item]) {
 
   // A -> mutates state of the store
   def updateQuality(): Unit = {
-    val updatedItems = updated(items)
+    val updatedItems = updated(items.map(StoreItem.from))
 
     items.zip(updatedItems).foreach {
       case (original, updated) => {
@@ -26,13 +26,12 @@ class GildedRose(val items: Array[Item]) {
   }
 
   // C -> Copies on write, no side effects
-  private def updated(items: Array[Item]): Array[Item] = {
-    val updatedItems = items.clone()
-    updatedItems.map(item => updated(item))
+  def updated(items: Seq[StoreItem]): Seq[StoreItem] = {
+    items.map(item => updated(item))
   }
 
   // C -> Copies on write, no side effects
-  private def updated(item: Item): Item = {
+  private def updated(item: StoreItem): StoreItem = {
     val updatedItem =
       item.name match {
         case AGED_BRIE => increaseQuality(item)
@@ -61,14 +60,14 @@ class GildedRose(val items: Array[Item]) {
   }
 
   // C -> copies argument, returns new value
-  private def increaseQuality(item: Item, amount: Int = 1): Item = {
+  private def increaseQuality(item: StoreItem, amount: Int = 1): StoreItem = {
     if (item.quality + amount > MAX_QUALITY)
       withQuality(item, MAX_QUALITY)
     else withQuality(item, item.quality + amount)
   }
 
   // C -> copies argument, returns new value
-  private def decreaseQuality(item: Item): Item = {
+  private def decreaseQuality(item: StoreItem): StoreItem = {
     if (item.name == SULFURAS) item
     else if (item.quality > MIN_QUALITY)
       withQuality(item, item.quality - 1)
@@ -76,25 +75,24 @@ class GildedRose(val items: Array[Item]) {
   }
 
   // C -> copies argument, returns new value
-  private def withQuality(item: Item, quality: Int): Item = {
-    val copy = copied(item)
-    copy.quality = quality
-    copy
+  private def withQuality(item: StoreItem, quality: Int): StoreItem = {
+    item.copy(quality = quality)
   }
 
   // C -> copies argument, returns new value
-  private def decreaseSellBy(item: Item): Item = {
+  private def decreaseSellBy(item: StoreItem): StoreItem = {
     if (item.name == SULFURAS) item
     else withSellIn(item, item.sellIn - 1)
   }
 
-  private def withSellIn(item: Item, sellIn: Int): Item = {
-    val copy = copied(item)
-    copy.sellIn = sellIn
-    copy
+  private def withSellIn(item: StoreItem, sellIn: Int): StoreItem = {
+    item.copy(sellIn = sellIn)
   }
+}
 
-  private def copied(item: Item): Item = {
-    new Item(item.name, item.sellIn, item.quality)
-  }
+// D -> immutable
+case class StoreItem(name: String, sellIn: Int, quality: Int)
+
+object StoreItem {
+  def from(item: Item): StoreItem = StoreItem(item.name, item.sellIn, item.quality)
 }
