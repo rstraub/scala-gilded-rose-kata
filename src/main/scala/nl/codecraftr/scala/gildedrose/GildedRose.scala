@@ -15,16 +15,7 @@ class GildedRose(val items: Array[Item]) {
   // A
   def updateQuality(): Unit = {
     items.foreach(item => {
-      if (
-        !item.name.equals(AGED_BRIE)
-        && !item.name.equals(BACKSTAGE_PASS)
-      ) {
-        if (item.quality > 0) {
-          if (!item.name.equals(SULFURAS)) {
-            item.quality = decreaseQuality(item)
-          }
-        }
-      } else {
+      if (item.name.equals(AGED_BRIE) || item.name.equals(BACKSTAGE_PASS)) {
         if (item.quality < 50) {
           item.quality = increaseQuality(item)
 
@@ -40,6 +31,12 @@ class GildedRose(val items: Array[Item]) {
                 item.quality = increaseQuality(item)
               }
             }
+          }
+        }
+      } else {
+        if (item.quality > 0) {
+          if (!item.name.equals(SULFURAS)) {
+            item.quality = decreaseQuality(item)
           }
         }
       }
