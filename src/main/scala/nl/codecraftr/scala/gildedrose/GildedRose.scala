@@ -39,7 +39,7 @@ class GildedRose(val items: Array[Item]) {
       }
 
       if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
-        item.sellIn = item.sellIn - 1
+        item.sellIn = decreaseSellBy(item)
       }
 
       if (item.sellIn < 0) {
@@ -51,7 +51,7 @@ class GildedRose(val items: Array[Item]) {
               }
             }
           } else {
-            item.quality = item.quality - item.quality
+            item.quality = 0
           }
         } else {
           if (item.quality < 50) {
@@ -62,7 +62,11 @@ class GildedRose(val items: Array[Item]) {
     })
   }
 
-  private def increaseQuality(item: Item) = {
+    private def decreaseSellBy(item: Item) = {
+        item.sellIn - 1
+    }
+
+    private def increaseQuality(item: Item) = {
     item.quality + 1
   }
 
