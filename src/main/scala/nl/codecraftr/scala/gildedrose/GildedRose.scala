@@ -3,9 +3,7 @@ package nl.codecraftr.scala.gildedrose
 class GildedRose(val items: Array[Item]) {
 
   def updateQuality() {
-    for (i <- 0 until items.length) {
-      val item = items(i)
-
+    items.foreach(item => {
       if (
         !item.name.equals("Aged Brie")
         && !item.name.equals("Backstage passes to a TAFKAL80ETC concert")
@@ -56,6 +54,6 @@ class GildedRose(val items: Array[Item]) {
           }
         }
       }
-    }
+    })
   }
 }
