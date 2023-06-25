@@ -16,18 +16,16 @@ class GildedRose(val items: Array[Item]) {
   def updateQuality(): Unit = {
     items.foreach(item => {
       if (item.name.equals(AGED_BRIE) || item.name.equals(BACKSTAGE_PASS)) {
-        if (item.quality < 50) {
-          increaseQuality(item)
+        increaseQuality(item)
 
-          if (item.name.equals(BACKSTAGE_PASS)) {
-            if (item.sellIn < 11) {
-              increaseQuality(item)
+        if (item.name.equals(BACKSTAGE_PASS)) {
+          if (item.sellIn < 11) {
+            increaseQuality(item)
 
-            }
+          }
 
-            if (item.sellIn < 6) {
-              increaseQuality(item)
-            }
+          if (item.sellIn < 6) {
+            increaseQuality(item)
           }
         }
       } else {
