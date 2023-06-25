@@ -39,10 +39,10 @@ class GildedRose(val items: Array[Item]) {
 
       if (item.sellIn < 0) {
         if (!item.name.equals(AGED_BRIE)) {
-          if (!item.name.equals(BACKSTAGE_PASS)) {
-            decreaseQuality(item)
-          } else {
+          if (item.name.equals(BACKSTAGE_PASS)) {
             item.quality = 0
+          } else {
+            decreaseQuality(item)
           }
         } else {
           increaseQuality(item)
