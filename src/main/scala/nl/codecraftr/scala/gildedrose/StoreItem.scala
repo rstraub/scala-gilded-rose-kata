@@ -9,33 +9,34 @@ object StoreItem {
 
   def from(item: Item): StoreItem = {
     val quality = Quality(item.quality)
+    val sellIn = SellIn(item.sellIn)
     item.name match {
-      case SULFURAS       => Sulfuras(item.sellIn)
-      case BACKSTAGE_PASS => BackstagePass(item.sellIn, quality)
-      case AGED_BRIE      => AgedBrie(item.sellIn, quality)
-      case _              => RegularItem(item.name, item.sellIn, quality)
+      case SULFURAS       => Sulfuras(sellIn)
+      case BACKSTAGE_PASS => BackstagePass(sellIn, quality)
+      case AGED_BRIE      => AgedBrie(sellIn, quality)
+      case _              => RegularItem(item.name, sellIn, quality)
     }
   }
 }
 
 sealed trait StoreItem {
   def name: String
-  def sellIn: Int
+  def sellIn: SellIn
   def quality: Quality
 
   def updatedQuality: StoreItem
-  def updatedSellBy: StoreItem
+  def updatedSellIn: StoreItem
 }
 
-case class Sulfuras(sellIn: Int) extends StoreItem {
+case class Sulfuras(sellIn: SellIn) extends StoreItem {
   override def name: String = SULFURAS
   override def quality: Quality = LegendaryQuality
 
   override def updatedQuality: StoreItem = this
-  override def updatedSellBy: StoreItem = this
+  override def updatedSellIn: StoreItem = this
 }
 
-case class AgedBrie(sellIn: Int, quality: Quality) extends StoreItem {
+case class AgedBrie(sellIn: SellIn, quality: Quality) extends StoreItem {
   override def name: String = AGED_BRIE
 
   override def updatedQuality: StoreItem = {
@@ -48,10 +49,10 @@ case class AgedBrie(sellIn: Int, quality: Quality) extends StoreItem {
     copy(quality = newQuality)
   }
 
-  override def updatedSellBy: StoreItem = copy(sellIn = sellIn - 1)
+  override def updatedSellIn: StoreItem = copy(sellIn = sellIn.decreased)
 }
 
-case class BackstagePass(sellIn: Int, quality: Quality) extends StoreItem {
+case class BackstagePass(sellIn: SellIn, quality: Quality) extends StoreItem {
   override def name: String = BACKSTAGE_PASS
 
   override def updatedQuality: StoreItem = {
@@ -66,11 +67,11 @@ case class BackstagePass(sellIn: Int, quality: Quality) extends StoreItem {
     copy(quality = newQuality)
   }
 
-  override def updatedSellBy: StoreItem = copy(sellIn = sellIn - 1)
+  override def updatedSellIn: StoreItem = copy(sellIn = sellIn.decreased)
 }
 
 // D -> immutable
-case class RegularItem(name: String, sellIn: Int, quality: Quality)
+case class RegularItem(name: String, sellIn: SellIn, quality: Quality)
     extends StoreItem {
   def updatedQuality: StoreItem = {
     val updatedQuality = sellIn match {
@@ -81,5 +82,5 @@ case class RegularItem(name: String, sellIn: Int, quality: Quality)
     copy(quality = updatedQuality)
   }
 
-  def updatedSellBy: StoreItem = copy(sellIn = sellIn - 1)
+  def updatedSellIn: StoreItem = copy(sellIn = sellIn.decreased)
 }
