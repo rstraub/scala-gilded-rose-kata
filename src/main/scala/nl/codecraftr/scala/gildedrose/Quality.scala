@@ -1,32 +1,41 @@
 package nl.codecraftr.scala.gildedrose
 
-import nl.codecraftr.scala.gildedrose.Quality.{
-  MAXIMUM,
-  MAX_QUALITY,
-  MINIMUM,
-  MIN_QUALITY
-}
-
 object Quality {
-  private val MIN_QUALITY = 0
-  private val MAX_QUALITY = 50
-  val MAXIMUM: Quality = Quality(MAX_QUALITY)
-  val MINIMUM: Quality = Quality(MIN_QUALITY)
+  def apply(value: Int): Quality = {
+    if (value > MaximumQuality.value) MaximumQuality
+    else if (value < MinimumQuality.value) MinimumQuality
+    else RegularQuality(value)
+  }
 }
 
-// TODO als constrain creation within the bounds
-case class Quality(value: Int) extends AnyVal {
-  def +(amount: Int): Quality = {
-    val updatedQuality = value + amount
+sealed trait Quality {
+  def value: Int
 
-    if (updatedQuality > MAX_QUALITY) MAXIMUM
-    else copy(value = updatedQuality)
-  }
+  def -(amount: Int): Quality
+  def +(amount: Int): Quality
+  def >(other: Quality): Boolean = value > other.value
+  def <(other: Quality): Boolean = value < other.value
+}
 
-  def -(amount: Int): Quality = {
-    val updatedQuality = value - amount
+object MaximumQuality extends Quality {
+  override def value: Int = 50
+  override def -(amount: Int): Quality = RegularQuality(value - amount)
+  override def +(amount: Int): Quality = this
+}
 
-    if (updatedQuality < MIN_QUALITY) MINIMUM
-    else copy(value = updatedQuality)
-  }
+object MinimumQuality extends Quality {
+  override def value: Int = 0
+  override def -(amount: Int): Quality = this
+  override def +(amount: Int): Quality = RegularQuality(amount)
+}
+
+object LegendaryQuality extends Quality {
+  override def value: Int = 80
+  override def -(amount: Int): Quality = this
+  override def +(amount: Int): Quality = this
+}
+
+case class RegularQuality private(value: Int) extends Quality {
+  def +(amount: Int): Quality = Quality(value + amount)
+  def -(amount: Int): Quality = Quality(value - amount)
 }

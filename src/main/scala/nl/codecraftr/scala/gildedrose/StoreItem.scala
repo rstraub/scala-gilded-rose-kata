@@ -1,16 +1,8 @@
 package nl.codecraftr.scala.gildedrose
 
-import nl.codecraftr.scala.gildedrose.StoreItem.{
-  AGED_BRIE,
-  BACKSTAGE_PASS,
-  MAX_QUALITY,
-  MIN_QUALITY,
-  SULFURAS
-}
+import nl.codecraftr.scala.gildedrose.StoreItem.{AGED_BRIE, BACKSTAGE_PASS, SULFURAS}
 
 object StoreItem {
-  val MIN_QUALITY = 0
-  val MAX_QUALITY = 50
   val SULFURAS = "Sulfuras, Hand of Ragnaros"
   val AGED_BRIE = "Aged Brie"
   val BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert"
@@ -37,7 +29,7 @@ sealed trait StoreItem {
 
 case class Sulfuras(sellIn: Int) extends StoreItem {
   override def name: String = SULFURAS
-  override def quality: Quality = Quality(80)
+  override def quality: Quality = LegendaryQuality
 
   override def updatedQuality: StoreItem = this
   override def updatedSellBy: StoreItem = this
@@ -65,7 +57,7 @@ case class BackstagePass(sellIn: Int, quality: Quality) extends StoreItem {
   override def updatedQuality: StoreItem = {
     val newQuality =
       sellIn match {
-        case x if x < 0   => Quality(0)
+        case x if x < 0   => MinimumQuality
         case x if x <= 5  => quality + 3
         case x if x <= 10 => quality + 2
         case _            => quality + 1
