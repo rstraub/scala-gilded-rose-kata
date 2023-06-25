@@ -13,11 +13,9 @@ class GildedRose(val items: Array[Item]) {
   private val BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert"
   private val SULFURAS = "Sulfuras, Hand of Ragnaros"
 
-  // A
+  // A -> mutates state of the store
   def updateQuality(): Unit = {
-    val updatedItems = items.clone()
-
-    updateItems(updatedItems)
+    val updatedItems = updated(items)
 
     items.zip(updatedItems).foreach {
       case (original, updated) => {
@@ -27,31 +25,37 @@ class GildedRose(val items: Array[Item]) {
     }
   }
 
-  // A -> mutates arguments, no return value
-  private def updateItems(updatedItems: Array[Item]): Unit = {
-    updatedItems.foreach(item => {
-      item.name match {
-        case AGED_BRIE => increaseQuality(item)
-        case BACKSTAGE_PASS => {
-          item.sellIn match {
-            case x if x <= 5  => increaseQuality(item, 3)
-            case x if x <= 10 => increaseQuality(item, 2)
-            case _            => increaseQuality(item)
-          }
-        }
-        case _ => decreaseQuality(item)
-      }
+  // C -> Copies on write, no side effects
+  private def updated(items: Array[Item]): Array[Item] = {
+    val updatedItems = items.clone()
+    updatedItems.map(item => updated(item))
+  }
 
-      decreaseSellBy(item)
-
-      if (item.sellIn < 0) {
-        item.name match {
-          case AGED_BRIE      => increaseQuality(item)
-          case BACKSTAGE_PASS => item.quality = 0
-          case _              => decreaseQuality(item)
+  // C -> Copies on write, no side effects
+  private def updated(item: Item): Item = {
+    val updatedItem = copied(item)
+    updatedItem.name match {
+      case AGED_BRIE => increaseQuality(updatedItem)
+      case BACKSTAGE_PASS => {
+        updatedItem.sellIn match {
+          case x if x <= 5  => increaseQuality(updatedItem, 3)
+          case x if x <= 10 => increaseQuality(updatedItem, 2)
+          case _            => increaseQuality(updatedItem)
         }
       }
-    })
+      case _ => decreaseQuality(updatedItem)
+    }
+
+    decreaseSellBy(updatedItem)
+
+    if (updatedItem.sellIn < 0) {
+      updatedItem.name match {
+        case AGED_BRIE      => increaseQuality(updatedItem)
+        case BACKSTAGE_PASS => updatedItem.quality = 0
+        case _              => decreaseQuality(updatedItem)
+      }
+    }
+    updatedItem
   }
 
   // A -> mutates arguments, no return value
@@ -72,5 +76,9 @@ class GildedRose(val items: Array[Item]) {
     if (item.name == SULFURAS) return
     if (item.quality > MIN_QUALITY)
       item.quality = item.quality - 1
+  }
+
+  private def copied(item: Item): Item = {
+    new Item(item.name, item.sellIn, item.quality)
   }
 }
