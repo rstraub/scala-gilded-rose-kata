@@ -49,14 +49,10 @@ class GildedRose(val items: Array[Item]) {
       decreaseSellBy(item)
 
       if (item.sellIn < 0) {
-        if (item.name == AGED_BRIE) {
-          increaseQuality(item)
-        } else {
-          if (item.name == BACKSTAGE_PASS) {
-            item.quality = 0
-          } else {
-            decreaseQuality(item)
-          }
+        item.name match {
+          case AGED_BRIE      => increaseQuality(item)
+          case BACKSTAGE_PASS => item.quality = 0
+          case _              => decreaseQuality(item)
         }
       }
     })
