@@ -1,11 +1,12 @@
 package nl.codecraftr.scala.gildedrose
 
 object Quality {
-  def apply(value: Int): Quality = {
-    if (value > MaximumQuality.value) MaximumQuality
-    else if (value < MinimumQuality.value) MinimumQuality
-    else RegularQuality(value)
-  }
+  def apply(value: Int): Quality =
+    value match {
+      case x if x > MaximumQuality.value => MaximumQuality
+      case x if x < MinimumQuality.value => MinimumQuality
+      case _                             => RegularQuality(value)
+    }
 }
 
 sealed trait Quality {
@@ -35,7 +36,11 @@ object LegendaryQuality extends Quality {
   override def +(amount: Int): Quality = this
 }
 
-case class RegularQuality private(value: Int) extends Quality {
+case class RegularQuality private (value: Int) extends Quality {
   def +(amount: Int): Quality = Quality(value + amount)
   def -(amount: Int): Quality = Quality(value - amount)
+
+  // Here to prevent copy from bypassing lower and upper bounds for regular quality
+  def copy(value: Int = value): Quality = Quality(value)
 }
+
