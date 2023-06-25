@@ -30,20 +30,16 @@ class GildedRose(val items: Array[Item]) {
   // A -> mutates arguments, no return value
   private def updateItems(updatedItems: Array[Item]): Unit = {
     updatedItems.foreach(item => {
-      if (item.name == AGED_BRIE || item.name == BACKSTAGE_PASS) {
-        increaseQuality(item)
-
-        if (item.name == BACKSTAGE_PASS) {
-          if (item.sellIn <= 10) {
-            increaseQuality(item)
-          }
-
-          if (item.sellIn <= 5) {
-            increaseQuality(item)
+      item.name match {
+        case AGED_BRIE => increaseQuality(item)
+        case BACKSTAGE_PASS => {
+          item.sellIn match {
+            case x if x <= 5  => increaseQuality(item, 3)
+            case x if x <= 10 => increaseQuality(item, 2)
+            case _            => increaseQuality(item)
           }
         }
-      } else {
-        decreaseQuality(item)
+        case _ => decreaseQuality(item)
       }
 
       decreaseSellBy(item)
@@ -66,8 +62,9 @@ class GildedRose(val items: Array[Item]) {
 
   // A -> mutates arguments, no return value
   private def increaseQuality(item: Item, amount: Int = 1): Unit = {
-    if (item.quality < MAX_QUALITY)
-      item.quality = item.quality + amount
+    item.quality = item.quality + amount
+    if (item.quality > MAX_QUALITY)
+      item.quality = MAX_QUALITY
   }
 
   // A -> mutates arguments, no return value
