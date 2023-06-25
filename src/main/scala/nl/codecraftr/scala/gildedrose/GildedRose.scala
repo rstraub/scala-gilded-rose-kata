@@ -46,9 +46,7 @@ class GildedRose(val items: Array[Item]) {
         decreaseQuality(item)
       }
 
-      if (!item.name.equals(SULFURAS)) {
-        decreaseSellBy(item)
-      }
+      decreaseSellBy(item)
 
       if (item.sellIn < 0) {
         if (item.name.equals(AGED_BRIE)) {
@@ -66,6 +64,7 @@ class GildedRose(val items: Array[Item]) {
 
   // A -> mutates arguments, no return value
   private def decreaseSellBy(item: Item): Unit = {
+    if (item.name == SULFURAS) return
     item.sellIn = item.sellIn - 1
   }
 
