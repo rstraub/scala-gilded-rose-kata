@@ -15,7 +15,9 @@ class GildedRose(val items: Array[Item]) {
 
   // A
   def updateQuality(): Unit = {
-    items.foreach(item => {
+    val updatedItems = items.clone()
+
+    updatedItems.foreach(item => {
       if (item.name.equals(AGED_BRIE) || item.name.equals(BACKSTAGE_PASS)) {
         increaseQuality(item)
 
@@ -49,6 +51,13 @@ class GildedRose(val items: Array[Item]) {
         }
       }
     })
+
+    items.zip(updatedItems).foreach {
+      case (original, updated) => {
+        original.sellIn = updated.sellIn
+        original.quality = updated.quality
+      }
+    }
   }
 
   private def decreaseSellBy(item: Item): Unit = {
