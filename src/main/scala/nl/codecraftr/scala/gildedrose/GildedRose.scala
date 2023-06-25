@@ -17,18 +17,18 @@ class GildedRose(val items: Array[Item]) {
     items.foreach(item => {
       if (item.name.equals(AGED_BRIE) || item.name.equals(BACKSTAGE_PASS)) {
         if (item.quality < 50) {
-          item.quality = increaseQuality(item)
+          increaseQuality(item)
 
           if (item.name.equals(BACKSTAGE_PASS)) {
             if (item.sellIn < 11) {
               if (item.quality < 50) {
-                item.quality = increaseQuality(item)
+                increaseQuality(item)
               }
             }
 
             if (item.sellIn < 6) {
               if (item.quality < 50) {
-                item.quality = increaseQuality(item)
+                increaseQuality(item)
               }
             }
           }
@@ -36,13 +36,13 @@ class GildedRose(val items: Array[Item]) {
       } else {
         if (item.quality > 0) {
           if (!item.name.equals(SULFURAS)) {
-            item.quality = decreaseQuality(item)
+            decreaseQuality(item)
           }
         }
       }
 
       if (!item.name.equals(SULFURAS)) {
-        item.sellIn = decreaseSellBy(item)
+        decreaseSellBy(item)
       }
 
       if (item.sellIn < 0) {
@@ -50,7 +50,7 @@ class GildedRose(val items: Array[Item]) {
           if (!item.name.equals(BACKSTAGE_PASS)) {
             if (item.quality > 0) {
               if (!item.name.equals(SULFURAS)) {
-                item.quality = decreaseQuality(item)
+                decreaseQuality(item)
               }
             }
           } else {
@@ -58,22 +58,22 @@ class GildedRose(val items: Array[Item]) {
           }
         } else {
           if (item.quality < 50) {
-            item.quality = increaseQuality(item)
+            increaseQuality(item)
           }
         }
       }
     })
   }
 
-  private def decreaseSellBy(item: Item) = {
-    item.sellIn - 1
+  private def decreaseSellBy(item: Item): Unit = {
+    item.sellIn = item.sellIn - 1
   }
 
-  private def increaseQuality(item: Item) = {
-    item.quality + 1
+  private def increaseQuality(item: Item): Unit = {
+    item.quality = item.quality + 1
   }
 
-  private def decreaseQuality(item: Item) = {
-    item.quality - 1
+  private def decreaseQuality(item: Item): Unit = {
+    item.quality = item.quality - 1
   }
 }
