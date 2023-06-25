@@ -27,34 +27,34 @@ class GildedRose(val items: Array[Item]) {
   }
 
   private def updated(item: StoreItem): StoreItem = {
+    val decreasedSellIn = item.decreaseSellBy
+
     val updatedItem =
-      item.name match {
-        case AGED_BRIE => item.increaseQuality()
+      decreasedSellIn.name match {
+        case AGED_BRIE => decreasedSellIn.increaseQuality()
         case BACKSTAGE_PASS => {
-          item.sellIn match {
-            case x if x <= 5  => item.increaseQuality(3)
-            case x if x <= 10 => item.increaseQuality(2)
-            case _            => item.increaseQuality()
+          decreasedSellIn.sellIn match {
+            case x if x <= 5  => decreasedSellIn.increaseQuality(3)
+            case x if x <= 10 => decreasedSellIn.increaseQuality(2)
+            case _            => decreasedSellIn.increaseQuality()
           }
         }
-        case _ => item.decreaseQuality
+        case _ => decreasedSellIn.decreaseQuality
       }
 
-    val decreasedSellIn = updatedItem.decreaseSellBy
-
-      val afterSellIn =
-      if (decreasedSellIn.sellIn < 0) {
-        decreasedSellIn.name match {
-          case AGED_BRIE      => decreasedSellIn.increaseQuality()
-          case BACKSTAGE_PASS => worthless(decreasedSellIn)
-          case _              => decreasedSellIn.decreaseQuality
+    val afterSellIn =
+      if (updatedItem.sellIn < 0) {
+        updatedItem.name match {
+          case AGED_BRIE      => updatedItem.increaseQuality()
+          case BACKSTAGE_PASS => worthless(updatedItem)
+          case _              => updatedItem.decreaseQuality
         }
-      } else decreasedSellIn
+      } else updatedItem
 
     afterSellIn
   }
 
-    // C -> copies argument, returns new value
+  // C -> copies argument, returns new value
   private def worthless(item: StoreItem) = {
     item.copy(quality = 0)
   }
