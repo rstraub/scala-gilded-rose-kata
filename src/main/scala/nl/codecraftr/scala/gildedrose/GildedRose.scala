@@ -1,8 +1,13 @@
 package nl.codecraftr.scala.gildedrose
 
+/*
+ * A -> Action / Side Effect
+ * C -> Calculation / Pure Function
+ * D -> Data / Facts about Events
+ */
 class GildedRose(val items: Array[Item]) {
-
-  def updateQuality() {
+  // A
+  def updateQuality(): Unit = {
     items.foreach(item => {
       if (
         !item.name.equals("Aged Brie")
@@ -10,23 +15,23 @@ class GildedRose(val items: Array[Item]) {
       ) {
         if (item.quality > 0) {
           if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
-            item.quality = item.quality - 1
+            item.quality = decreaseQuality(item)
           }
         }
       } else {
         if (item.quality < 50) {
-          item.quality = item.quality + 1
+          item.quality = increaseQuality(item)
 
           if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
             if (item.sellIn < 11) {
               if (item.quality < 50) {
-                item.quality = item.quality + 1
+                item.quality = increaseQuality(item)
               }
             }
 
             if (item.sellIn < 6) {
               if (item.quality < 50) {
-                item.quality = item.quality + 1
+                item.quality = increaseQuality(item)
               }
             }
           }
@@ -42,7 +47,7 @@ class GildedRose(val items: Array[Item]) {
           if (!item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
             if (item.quality > 0) {
               if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
-                item.quality = item.quality - 1
+                item.quality = decreaseQuality(item)
               }
             }
           } else {
@@ -50,10 +55,18 @@ class GildedRose(val items: Array[Item]) {
           }
         } else {
           if (item.quality < 50) {
-            item.quality = item.quality + 1
+            item.quality = increaseQuality(item)
           }
         }
       }
     })
+  }
+
+  private def increaseQuality(item: Item) = {
+    item.quality + 1
+  }
+
+  private def decreaseQuality(item: Item) = {
+    item.quality - 1
   }
 }
