@@ -6,10 +6,10 @@ package nl.codecraftr.scala.gildedrose
  * D -> Data / Facts about Events
  */
 class GildedRose(val items: Array[Item]) {
+  private val MAX_QUALITY = 50
+
   private val AGED_BRIE = "Aged Brie"
-
   private val BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert"
-
   private val SULFURAS = "Sulfuras, Hand of Ragnaros"
 
   // A
@@ -21,15 +21,12 @@ class GildedRose(val items: Array[Item]) {
 
           if (item.name.equals(BACKSTAGE_PASS)) {
             if (item.sellIn < 11) {
-              if (item.quality < 50) {
-                increaseQuality(item)
-              }
+              increaseQuality(item)
+
             }
 
             if (item.sellIn < 6) {
-              if (item.quality < 50) {
-                increaseQuality(item)
-              }
+              increaseQuality(item)
             }
           }
         }
@@ -57,9 +54,7 @@ class GildedRose(val items: Array[Item]) {
             item.quality = 0
           }
         } else {
-          if (item.quality < 50) {
-            increaseQuality(item)
-          }
+          increaseQuality(item)
         }
       }
     })
@@ -70,7 +65,8 @@ class GildedRose(val items: Array[Item]) {
   }
 
   private def increaseQuality(item: Item): Unit = {
-    item.quality = item.quality + 1
+    if (item.quality < MAX_QUALITY)
+      item.quality = item.quality + 1
   }
 
   private def decreaseQuality(item: Item): Unit = {
