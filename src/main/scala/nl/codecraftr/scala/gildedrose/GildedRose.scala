@@ -17,6 +17,18 @@ class GildedRose(val items: Array[Item]) {
   def updateQuality(): Unit = {
     val updatedItems = items.clone()
 
+    updateItems(updatedItems)
+
+    items.zip(updatedItems).foreach {
+      case (original, updated) => {
+        original.sellIn = updated.sellIn
+        original.quality = updated.quality
+      }
+    }
+  }
+
+  // A -> mutates arguments, no return value
+  private def updateItems(updatedItems: Array[Item]): Unit = {
     updatedItems.foreach(item => {
       if (item.name.equals(AGED_BRIE) || item.name.equals(BACKSTAGE_PASS)) {
         increaseQuality(item)
@@ -24,7 +36,6 @@ class GildedRose(val items: Array[Item]) {
         if (item.name.equals(BACKSTAGE_PASS)) {
           if (item.sellIn <= 10) {
             increaseQuality(item)
-
           }
 
           if (item.sellIn <= 5) {
@@ -51,24 +62,20 @@ class GildedRose(val items: Array[Item]) {
         }
       }
     })
-
-    items.zip(updatedItems).foreach {
-      case (original, updated) => {
-        original.sellIn = updated.sellIn
-        original.quality = updated.quality
-      }
-    }
   }
 
+  // A -> mutates arguments, no return value
   private def decreaseSellBy(item: Item): Unit = {
     item.sellIn = item.sellIn - 1
   }
 
+  // A -> mutates arguments, no return value
   private def increaseQuality(item: Item): Unit = {
     if (item.quality < MAX_QUALITY)
       item.quality = item.quality + 1
   }
 
+  // A -> mutates arguments, no return value
   private def decreaseQuality(item: Item): Unit = {
     if (item.name == SULFURAS) return
     if (item.quality > MIN_QUALITY)
