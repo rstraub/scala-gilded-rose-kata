@@ -7,6 +7,7 @@ object Quality {
   private val MAX_QUALITY = 50
 }
 
+// TODO als constrain creation within the bounds
 case class Quality(value: Int) extends AnyVal {
   def +(amount: Int): Quality = {
     val updatedQuality = value + amount

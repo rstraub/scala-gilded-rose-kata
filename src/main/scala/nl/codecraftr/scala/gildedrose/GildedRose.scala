@@ -13,7 +13,7 @@ class GildedRose(val items: Array[Item]) {
     items.zip(updatedItems).foreach {
       case (original, updated) => {
         original.sellIn = updated.sellIn
-        original.quality = updated.quality
+        original.quality = updated.quality.value
       }
     }
   }
