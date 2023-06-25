@@ -11,10 +11,9 @@ class GildedRose(val items: Array[Item]) {
     val updatedItems = updated(items.map(StoreItem.from))
 
     items.zip(updatedItems).foreach {
-      case (original, updated) => {
-        original.sellIn = updated.sellIn.value
-        original.quality = updated.quality.value
-      }
+      case (original, updated) =>
+          original.sellIn = updated.sellIn.value
+          original.quality = updated.quality.value
     }
   }
 
