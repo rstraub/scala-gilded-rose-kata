@@ -1,6 +1,9 @@
 package nl.codecraftr.scala.gildedrose
 
-object TexttestFixture {
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+
+object GildedRoseAcceptanceTest extends AnyFlatSpec with Matchers {
   def main(args: Array[String]): Unit = {
     val items = Array[Item](
       new Item("+5 Dexterity Vest", 10, 20),
