@@ -46,22 +46,16 @@ class GildedRose(val items: Array[Item]) {
       case _ => decreaseQuality(updatedItem)
     }
 
-    decreaseSellBy(updatedItem)
+    val decreasedSellIn = decreaseSellBy(updatedItem)
 
-    if (updatedItem.sellIn < 0) {
-      updatedItem.name match {
-        case AGED_BRIE      => increaseQuality(updatedItem)
-        case BACKSTAGE_PASS => updatedItem.quality = 0
-        case _              => decreaseQuality(updatedItem)
+    if (decreasedSellIn.sellIn < 0) {
+      decreasedSellIn.name match {
+        case AGED_BRIE      => increaseQuality(decreasedSellIn)
+        case BACKSTAGE_PASS => decreasedSellIn.quality = 0
+        case _              => decreaseQuality(decreasedSellIn)
       }
     }
-    updatedItem
-  }
-
-  // A -> mutates arguments, no return value
-  private def decreaseSellBy(item: Item): Unit = {
-    if (item.name == SULFURAS) return
-    item.sellIn = item.sellIn - 1
+    decreasedSellIn
   }
 
   // A -> mutates arguments, no return value
@@ -76,6 +70,18 @@ class GildedRose(val items: Array[Item]) {
     if (item.name == SULFURAS) return
     if (item.quality > MIN_QUALITY)
       item.quality = item.quality - 1
+  }
+
+  // C -> copies argument, returns new value
+  private def decreaseSellBy(item: Item): Item = {
+    if (item.name == SULFURAS) item
+    else withSellIn(item, item.sellIn - 1)
+  }
+
+  private def withSellIn(item: Item, sellIn: Int): Item = {
+    val copy = copied(item)
+    copy.sellIn = sellIn
+    copy
   }
 
   private def copied(item: Item): Item = {
