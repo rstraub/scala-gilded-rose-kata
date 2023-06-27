@@ -43,4 +43,3 @@ case class RegularQuality private (value: Int) extends Quality {
   // Here to prevent copy from bypassing lower and upper bounds for regular quality
   def copy(value: Int = value): Quality = Quality(value)
 }
-

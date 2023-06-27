@@ -10,17 +10,13 @@ class GildedRose(val items: Array[Item]) {
   def updateQuality(): Unit = {
     val updatedItems = updated(items.map(StoreItem.from))
 
-    items.zip(updatedItems).foreach {
-      case (original, updated) =>
-          original.sellIn = updated.sellIn.value
-          original.quality = updated.quality.value
+    items.zip(updatedItems).foreach { case (original, updated) =>
+      original.sellIn = updated.sellIn.value
+      original.quality = updated.quality.value
     }
   }
 
   // C -> Copies on write, no side effects
   private def updated(items: Seq[StoreItem]): Seq[StoreItem] =
-    items.map(updated)
-
-  private def updated(item: StoreItem): StoreItem =
-    item.updatedSellIn.updatedQuality
+    items.map(_.updated)
 }
